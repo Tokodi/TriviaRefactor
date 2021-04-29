@@ -5,7 +5,7 @@ if [ $# -ne 1 ]; then
     exit 0
 fi
 
-ORIGINAL_HASH=d4a26afb9e2939629598194ac6828296229499ed
+ORIGINAL_HASH=85ca1b50d3115c0ae973c56698c6767ba412b663
 NEW_HASH="$(sha1sum $1 | awk '{ print $1 }')"
 
 if [ $ORIGINAL_HASH = $NEW_HASH ]; then
