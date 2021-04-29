@@ -39,9 +39,9 @@ bool Game::isPlayable() {
 
 bool Game::add(string playerName) {
     players.push_back(playerName);
-    places[howManyPlayers()]       = 0;
-    purses[howManyPlayers()]       = 0;
-    inPenaltyBox[howManyPlayers()] = false;
+    places.at(howManyPlayers()-1)       = 0;
+    purses.at(howManyPlayers()-1)       = 0;
+    inPenaltyBox.at(howManyPlayers()-1) = false;
 
     cout << playerName << " was added" << endl;
     cout << "They are player number " << players.size() << endl;
@@ -53,32 +53,32 @@ size_t Game::howManyPlayers() {
 }
 
 void Game::roll(int roll) {
-    cout << players[currentPlayer] << " is the current player" << endl;
+    cout << players.at(currentPlayer) << " is the current player" << endl;
     cout << "They have rolled a " << roll << endl;
 
-    if (inPenaltyBox[currentPlayer]) {
+    if (inPenaltyBox.at(currentPlayer)) {
         if (roll % 2 != 0) {
             isGettingOutOfPenaltyBox = true;
 
-            cout << players[currentPlayer] << " is getting out of the penalty box" << endl;
-            places[currentPlayer] = places[currentPlayer] + roll;
-            if (places[currentPlayer] > 11)
-                places[currentPlayer] = places[currentPlayer] - 12;
+            cout << players.at(currentPlayer) << " is getting out of the penalty box" << endl;
+            places.at(currentPlayer) = places.at(currentPlayer) + roll;
+            if (places.at(currentPlayer) > 11)
+                places.at(currentPlayer) = places.at(currentPlayer) - 12;
 
-            cout << players[currentPlayer] << "'s new location is " << places[currentPlayer] << endl;
+            cout << players.at(currentPlayer) << "'s new location is " << places.at(currentPlayer) << endl;
             cout << "The category is " << currentCategory() << endl;
             askQuestion();
         } else {
-            cout << players[currentPlayer] << " is not getting out of the penalty box" << endl;
+            cout << players.at(currentPlayer) << " is not getting out of the penalty box" << endl;
             isGettingOutOfPenaltyBox = false;
         }
 
     } else {
-        places[currentPlayer] = places[currentPlayer] + roll;
-        if (places[currentPlayer] > 11)
-            places[currentPlayer] = places[currentPlayer] - 12;
+        places.at(currentPlayer) = places.at(currentPlayer) + roll;
+        if (places.at(currentPlayer) > 11)
+            places.at(currentPlayer) = places.at(currentPlayer) - 12;
 
-        cout << players[currentPlayer] << "'s new location is " << places[currentPlayer] << endl;
+        cout << players.at(currentPlayer) << "'s new location is " << places.at(currentPlayer) << endl;
         cout << "The category is " << currentCategory() << endl;
         askQuestion();
     }
@@ -126,11 +126,11 @@ string Game::currentCategory() {
 }
 
 bool Game::wasCorrectlyAnswered() {
-    if (inPenaltyBox[currentPlayer]) {
+    if (inPenaltyBox.at(currentPlayer)) {
         if (isGettingOutOfPenaltyBox) {
             cout << "Answer was correct!!!!" << endl;
-            purses[currentPlayer]++;
-            cout << players[currentPlayer] << " now has " << purses[currentPlayer] << " Gold Coins." << endl;
+            purses.at(currentPlayer)++;
+            cout << players.at(currentPlayer) << " now has " << purses.at(currentPlayer) << " Gold Coins." << endl;
 
             bool winner = didPlayerWin();
             currentPlayer++;
@@ -147,8 +147,8 @@ bool Game::wasCorrectlyAnswered() {
 
     } else {
         cout << "Answer was corrent!!!!" << endl;
-        purses[currentPlayer]++;
-        cout << players[currentPlayer] << " now has " << purses[currentPlayer] << " Gold Coins." << endl;
+        purses.at(currentPlayer)++;
+        cout << players.at(currentPlayer) << " now has " << purses.at(currentPlayer) << " Gold Coins." << endl;
 
         bool winner = didPlayerWin();
         currentPlayer++;
@@ -161,8 +161,8 @@ bool Game::wasCorrectlyAnswered() {
 
 bool Game::wrongAnswer() {
     cout << "Question was incorrectly answered" << endl;
-    cout << players[currentPlayer] + " was sent to the penalty box" << endl;
-    inPenaltyBox[currentPlayer] = true;
+    cout << players.at(currentPlayer) + " was sent to the penalty box" << endl;
+    inPenaltyBox.at(currentPlayer) = true;
 
     currentPlayer++;
     if (currentPlayer == players.size())
