@@ -1,0 +1,33 @@
+{
+    "BasedOnStyle": "Google",
+    "AccessModifierOffset": "-4",
+    "AlignAfterOpenBracket": "Align",
+    "AlignConsecutiveAssignments": "true",
+    "AlignConsecutiveDeclarations": "true",
+    "AlignOperands": "true",
+    "AlignTrailingComments": "true",
+    "AllowAllArgumentsOnNextLine": "true"
+    "AllowAllConstructorInitializersOnNextLine": "true"
+    "AllowAllParametersOfDeclarationOnNextLine": "true"
+    "AllowShortBlocksOnASingleLine": "false"
+    "AllowShortCaseLabelsOnASingleLine": "false"
+    "AllowShortFunctionsOnASingleLine": "None"
+    "AllowShortIfStatementsOnASingleLine": "Never"
+    "AllowShortLambdasOnASingleLine": "All"
+    "AllowShortLoopsOnASingleLine": "false"
+    "ColumnLimit": "120",
+    "CompactNamespaces": "true",
+    "ConstructorInitializerAllOnOneLineOrOnePerLine": "false",
+    "ConstructorInitializerIndentWidth": "0",
+    "DerivePointerAlignment": "false",
+    "IncludeBlocks": "Regroup",
+    "IndentWidth": "4",
+    "Language": "Cpp",
+    "FixNamespaceComments": "true",
+    "PointerAlignment": "Left",
+    "SpaceBeforeAssignmentOperators": "true",
+    "UseTab": "Never",
+    "BreakConstructorInitializers": "BeforeComma",
+    "ConstructorInitializerAllOnOneLineOrOnePerLine": "true",
+    "AllowAllConstructorInitializersOnNextLine": "true"
+}

@@ -5,6 +5,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install required packages
 RUN apt-get update && apt-get install -y \
+    clang \
+    clang-format \
+    clang-tidy \
     cmake \
     g++ \
     gdb \
