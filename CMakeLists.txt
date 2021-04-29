@@ -13,6 +13,11 @@ endif()
 include(cmake/compilersettings.cmake)
 
 add_executable(${PROJECT_NAME}
-    Game.cpp
-    GameRunner.cpp
+    main.cc
 )
+
+target_link_libraries(${PROJECT_NAME}
+    model
+)
+
+add_subdirectory(model)

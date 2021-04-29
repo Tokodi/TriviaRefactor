@@ -1,12 +1,12 @@
 #include <stdlib.h>
-#include "Game.h"
+#include "game.h"
 
 static bool notAWinner;
 
 int main()
 {
 
-	srand(static_cast<unsigned int>(time(nullptr)));
+	srand(1);
 	Game aGame;
 
 	aGame.add("Chet");

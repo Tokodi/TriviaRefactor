@@ -9,7 +9,9 @@ RUN apt-get update && apt-get install -y \
     g++ \
     gdb \
     git \
-    make
+    googletest \
+    libgtest-dev \
+    make 
 
 # Create and set user
 RUN useradd -ms /bin/bash dockeruser

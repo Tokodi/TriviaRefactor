@@ -1,4 +1,5 @@
 include(cmake/compilerwarnings.cmake)
+include(cmake/requirements.cmake)
 
 ########################################################################################################################
 # Defaults                                                                                                             #
