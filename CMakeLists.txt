@@ -10,8 +10,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message("####################################")
 endif()
 
-SET(CMAKE_CXX_STANDARD 17)
-SET(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+include(cmake/compilersettings.cmake)
 
 add_executable(${PROJECT_NAME}
     Game.cpp

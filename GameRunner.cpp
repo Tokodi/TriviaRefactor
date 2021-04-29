@@ -6,7 +6,7 @@ static bool notAWinner;
 int main()
 {
 
-	srand(time(NULL));
+	srand(static_cast<unsigned int>(time(nullptr)));
 	Game aGame;
 
 	aGame.add("Chet");

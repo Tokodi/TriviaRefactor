@@ -30,7 +30,7 @@ public:
 	bool isPlayable();
 	bool add(string playerName);
 
-	int howManyPlayers();
+    std::size_t howManyPlayers();
 	void roll(int roll);
 
 	private:
