@@ -1,20 +1,22 @@
 #pragma once
 
 #include <array>
-#include <iostream>
 #include <list>
 #include <vector>
-using namespace std;
+
+#include "player.h"
+
+namespace Trivia::Model {
 
 class Game {
 public:
     Game();
 
     bool   isPlayable();
-    bool   add(string playerName);
+    void   addPlayer(std::string playerName);
 
-    std::size_t howManyPlayers();
-    void        roll(int roll);
+    std::size_t getNumberOfPlayers();
+    void        roll(std::uint32_t roll);
 
     bool wasCorrectlyAnswered();
     bool wrongAnswer();
@@ -25,24 +27,22 @@ protected:
     static constexpr std::size_t NUMBER_OF_COINS_TO_WIN = 6;
 
 protected:
-    string createRockQuestion(std::size_t index);
+    std::string createRockQuestion(std::size_t index);
     void   askQuestion();
-    string currentCategory();
+    std::string currentCategory();
 
     bool didPlayerWin();
 
 protected:
-    vector<string> players{};
+    std::vector<Player> _players{};
+    std::vector<Player>::iterator _currentPlayer{_players.end()};
 
-    std::array<int, NUMBER_OF_MAX_PLAYERS> places{};
-    std::array<int, NUMBER_OF_MAX_PLAYERS> purses{};
-    std::array<bool, NUMBER_OF_MAX_PLAYERS> inPenaltyBox{};
+    std::list<std::string> popQuestions{};
+    std::list<std::string> scienceQuestions{};
+    std::list<std::string> sportsQuestions{};
+    std::list<std::string> rockQuestions{};
 
-    list<string> popQuestions{};
-    list<string> scienceQuestions{};
-    list<string> sportsQuestions{};
-    list<string> rockQuestions{};
-
-    unsigned int currentPlayer{0};
     bool         isGettingOutOfPenaltyBox{false};
 };
+
+} // namespace Trivia::Model

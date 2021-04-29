@@ -3,6 +3,7 @@ set(TEST_NAME test_trivia_model)
 add_executable(${TEST_NAME}
     test_game.cc
     test_main.cc
+    test_player.cc
 )
 
 target_link_libraries(${TEST_NAME}

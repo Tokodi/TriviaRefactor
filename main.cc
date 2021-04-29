@@ -6,11 +6,11 @@ static bool notAWinner;
 
 int main() {
     srand(1);
-    Game aGame;
+    Trivia::Model::Game aGame;
 
-    aGame.add("Chet");
-    aGame.add("Pat");
-    aGame.add("Sue");
+    aGame.addPlayer("Chet");
+    aGame.addPlayer("Pat");
+    aGame.addPlayer("Sue");
 
     do {
         aGame.roll(rand() % 5 + 1); // NOLINT

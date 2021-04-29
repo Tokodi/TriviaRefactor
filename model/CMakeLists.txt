@@ -2,6 +2,7 @@ set(LIB_NAME model)
 
 add_library(${LIB_NAME} STATIC
     game.cc
+    player.cc
 )
 
 target_include_directories(${LIB_NAME}

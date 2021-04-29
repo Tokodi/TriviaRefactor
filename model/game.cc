@@ -6,8 +6,15 @@
 #include <iostream>
 #include <sstream>
 
-using namespace std;
+using std::cout;
+using std::endl;
+using std::ostringstream;
+using std::runtime_error;
 using std::size_t;
+using std::string;
+using std::uint32_t;
+
+namespace Trivia::Model {
 
 Game::Game() {
     for (size_t i = 0; i < NUMBER_OF_QUESTIONS_PER_SUBJECT; ++i) {
@@ -35,51 +42,56 @@ string Game::createRockQuestion(size_t index) {
 }
 
 bool Game::isPlayable() {
-    return (howManyPlayers() >= 2);
+    return (getNumberOfPlayers() >= 1); // TODO: Default was 2
 }
 
-bool Game::add(string playerName) {
-    players.emplace_back(playerName);
-    places.at(howManyPlayers()-1)       = 0;
-    purses.at(howManyPlayers()-1)       = 0;
-    inPenaltyBox.at(howManyPlayers()-1) = false;
+void Game::addPlayer(string name) {
+    if (NUMBER_OF_MAX_PLAYERS == getNumberOfPlayers()) {
+        throw runtime_error("Maximum player number reached");
+    }
+    _players.emplace_back(std::move(name));
+    _currentPlayer = std::prev(_players.end());
 
-    cout << playerName << " was added" << endl;
-    cout << "They are player number " << players.size() << endl;
-    return true;
+    cout << _players.back().getName() << " was added" << endl;
+    cout << "They are player number " << getNumberOfPlayers() << endl;
 }
 
-size_t Game::howManyPlayers() {
-    return players.size();
+size_t Game::getNumberOfPlayers() {
+    return _players.size();
 }
 
-void Game::roll(int roll) {
-    cout << players.at(currentPlayer) << " is the current player" << endl;
+void Game::roll(uint32_t roll) {
+    if (!isPlayable())
+        throw runtime_error("Not enough players");
+
+    if (std::next(_currentPlayer) == _players.end()) {
+        _currentPlayer = _players.begin();
+    } else {
+        ++_currentPlayer;
+    }
+
+    cout << _currentPlayer->getName() << " is the current player" << endl;
     cout << "They have rolled a " << roll << endl;
 
-    if (inPenaltyBox.at(currentPlayer)) {
+    if (_currentPlayer->isInPenalty()) {
         if (roll % 2 != 0) {
             isGettingOutOfPenaltyBox = true;
 
-            cout << players.at(currentPlayer) << " is getting out of the penalty box" << endl;
-            places.at(currentPlayer) = places.at(currentPlayer) + roll;
-            if (places.at(currentPlayer) > 11) // NOLINT
-                places.at(currentPlayer) = places.at(currentPlayer) - 12; // NOLINT
+            cout << _currentPlayer->getName() << " is getting out of the penalty box" << endl;
+            _currentPlayer->step(roll);
 
-            cout << players.at(currentPlayer) << "'s new location is " << places.at(currentPlayer) << endl;
+            cout << _currentPlayer->getName() << "'s new location is " << _currentPlayer->getPosition() << endl;
             cout << "The category is " << currentCategory() << endl;
             askQuestion();
         } else {
-            cout << players.at(currentPlayer) << " is not getting out of the penalty box" << endl;
+            cout << _currentPlayer->getName() << " is not getting out of the penalty box" << endl;
             isGettingOutOfPenaltyBox = false;
         }
 
     } else {
-        places.at(currentPlayer) = places.at(currentPlayer) + roll;
-        if (places.at(currentPlayer) > 11) // NOLINT
-            places.at(currentPlayer) = places.at(currentPlayer) - 12; // NOLINT
+        _currentPlayer->step(roll);
 
-        cout << players.at(currentPlayer) << "'s new location is " << places.at(currentPlayer) << endl;
+        cout << _currentPlayer->getName() << "'s new location is " << _currentPlayer->getPosition() << endl;
         cout << "The category is " << currentCategory() << endl;
         askQuestion();
     }
@@ -105,72 +117,65 @@ void Game::askQuestion() {
 }
 
 string Game::currentCategory() {
-    if (places[currentPlayer] == 0) // NOLINT
+    if (_currentPlayer->getPosition() == 0) // NOLINT
         return "Pop";
-    if (places[currentPlayer] == 4) // NOLINT
+    if (_currentPlayer->getPosition() == 4) // NOLINT
         return "Pop";
-    if (places[currentPlayer] == 8) // NOLINT
+    if (_currentPlayer->getPosition() == 8) // NOLINT
         return "Pop";
-    if (places[currentPlayer] == 1) // NOLINT
+    if (_currentPlayer->getPosition() == 1) // NOLINT
         return "Science";
-    if (places[currentPlayer] == 5) // NOLINT
+    if (_currentPlayer->getPosition() == 5) // NOLINT
         return "Science";
-    if (places[currentPlayer] == 9) // NOLINT
+    if (_currentPlayer->getPosition() == 9) // NOLINT
         return "Science";
-    if (places[currentPlayer] == 2) // NOLINT
+    if (_currentPlayer->getPosition() == 2) // NOLINT
         return "Sports";
-    if (places[currentPlayer] == 6) // NOLINT
+    if (_currentPlayer->getPosition() == 6) // NOLINT
         return "Sports";
-    if (places[currentPlayer] == 10) // NOLINT
+    if (_currentPlayer->getPosition() == 10) // NOLINT
         return "Sports";
     return "Rock";
 }
 
 bool Game::wasCorrectlyAnswered() {
-    if (inPenaltyBox.at(currentPlayer)) {
+    if (_currentPlayer->isInPenalty()) {
         if (isGettingOutOfPenaltyBox) {
             cout << "Answer was correct!!!!" << endl;
-            purses.at(currentPlayer)++;
-            cout << players.at(currentPlayer) << " now has " << purses.at(currentPlayer) << " Gold Coins." << endl;
+            _currentPlayer->addCoin();
+            cout << _currentPlayer->getName() << " now has " << _currentPlayer->getNumberOfCoins() << " Gold Coins." << endl;
 
             bool winner = didPlayerWin();
-            currentPlayer++;
-            if (currentPlayer == players.size())
-                currentPlayer = 0;
 
             return winner;
         } else {
-            currentPlayer++;
-            if (currentPlayer == players.size())
-                currentPlayer = 0;
             return true;
         }
 
     } else {
         cout << "Answer was corrent!!!!" << endl;
-        purses.at(currentPlayer)++;
-        cout << players.at(currentPlayer) << " now has " << purses.at(currentPlayer) << " Gold Coins." << endl;
+        _currentPlayer->addCoin();
+        cout << _currentPlayer->getName() << " now has " << _currentPlayer->getNumberOfCoins() << " Gold Coins." << endl;
 
         bool winner = didPlayerWin();
-        currentPlayer++;
-        if (currentPlayer == players.size())
-            currentPlayer = 0;
 
         return winner;
     }
 }
 
 bool Game::wrongAnswer() {
-    cout << "Question was incorrectly answered" << endl;
-    cout << players.at(currentPlayer) + " was sent to the penalty box" << endl;
-    inPenaltyBox.at(currentPlayer) = true;
+    if (!isPlayable())
+        throw runtime_error("Not enough players");
 
-    currentPlayer++;
-    if (currentPlayer == players.size())
-        currentPlayer = 0;
+    cout << "Question was incorrectly answered" << endl;
+    cout << _currentPlayer->getName() << " was sent to the penalty box" << endl;
+    _currentPlayer->toPenalty();
+
     return true;
 }
 
 bool Game::didPlayerWin() {
-    return !(purses[currentPlayer] == NUMBER_OF_COINS_TO_WIN);
+    return !(_currentPlayer->getNumberOfCoins() == NUMBER_OF_COINS_TO_WIN);
 }
+
+} //  namespace Trivia::Model

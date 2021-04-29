@@ -1,4 +1,5 @@
 #include "game.h"
+#include "player.h"
 
 #include <gtest/gtest.h>
 
@@ -10,12 +11,18 @@
 using std::array;
 using std::cout;
 using std::list;
+using std::out_of_range;
+using std::runtime_error;
 using std::size_t;
 using std::string;
-using std::out_of_range;
+using std::vector;
 
-class TestGame : public Game {
+class TestGame : public Trivia::Model::Game {
 public:
+    [[nodiscard]] const vector<Trivia::Model::Player>& getPlayers() const {
+        return _players;
+    }
+
     [[nodiscard]] const list<string>& getPopQuestions() const {
         return popQuestions;
     }
@@ -32,20 +39,8 @@ public:
         return sportsQuestions;
     }
 
-    [[nodiscard]] const array<int, 6>& getPlaces() const { // NOLINT
-        return places;
-    }
-
-    [[nodiscard]] const array<int, 6>& getPurses() const { // NOLINT
-        return purses;
-    }
-
-    [[nodiscard]] const array<bool, 6>& getPenaltyBoxes() const { // NOLINT
-        return inPenaltyBox;
-    }
-
-    [[nodiscard]]unsigned int getCurrentPlayerId() const {
-        return currentPlayer;
+    [[nodiscard]]vector<Trivia::Model::Player>::iterator getCurrentPlayerIt() const {
+        return _currentPlayer;
     }
 };
 
@@ -64,72 +59,63 @@ protected:
 
 TEST_F(GameTestFixture, TestGameInitialization) {
     EXPECT_FALSE(_testGame.isPlayable());
-    EXPECT_EQ(0, _testGame.howManyPlayers());
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
+    EXPECT_EQ(0, _testGame.getNumberOfPlayers());
+    EXPECT_EQ(_testGame.getPlayers().end(), _testGame.getCurrentPlayerIt());
 
     EXPECT_EQ(50, _testGame.getPopQuestions().size()); // NOLINT
     EXPECT_EQ(50, _testGame.getRockQuestions().size()); // NOLIT
     EXPECT_EQ(50, _testGame.getScienceQuestions().size()); // NOLINT
     EXPECT_EQ(50, _testGame.getSportQuestions().size()); //NOLINT
 
-    EXPECT_EQ(6, _testGame.getPlaces().size()); // NOLINT
-    EXPECT_EQ(6, _testGame.getPurses().size()); // NOLINT
-    EXPECT_EQ(6, _testGame.getPenaltyBoxes().size()); // NOLINT
-
     for (size_t i = 0; i < 6; ++i) { // NOLINT
-        EXPECT_EQ(0, _testGame.getPlaces().at(i));
-        EXPECT_EQ(0, _testGame.getPurses().at(i));
-        EXPECT_FALSE(_testGame.getPenaltyBoxes().at(i));
+        EXPECT_THROW(_testGame.getPlayers().at(i), out_of_range);
     }
 }
 
 TEST_F(GameTestFixture, TestPlayerAdditionOne) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
-    EXPECT_EQ(1, _testGame.howManyPlayers());
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
+    _testGame.addPlayer("TestElek");
+    EXPECT_EQ(1, _testGame.getNumberOfPlayers());
+    EXPECT_EQ(std::prev(_testGame.getPlayers().end()), _testGame.getCurrentPlayerIt());
 
-
-    EXPECT_EQ(0, _testGame.getPlaces().at(0));
-    EXPECT_EQ(0, _testGame.getPurses().at(0));
-    EXPECT_FALSE(_testGame.getPenaltyBoxes().at(0));
+    EXPECT_EQ(0, _testGame.getPlayers().at(0).getPosition());
+    EXPECT_EQ(0, _testGame.getPlayers().at(0).getNumberOfCoins());
+    EXPECT_FALSE(_testGame.getPlayers().at(0).isInPenalty());
 
     for (size_t i = 1; i < 6; ++i) { //NOLINT
-        EXPECT_EQ(0, _testGame.getPlaces().at(i));
-        EXPECT_EQ(0, _testGame.getPurses().at(i));
-        EXPECT_FALSE(_testGame.getPenaltyBoxes().at(i));
+        EXPECT_THROW(_testGame.getPlayers().at(i), out_of_range);
     }
 }
 
 TEST_F(GameTestFixture, TestPlayerAdditionTooMany) {
     for (size_t i = 0; i < 6; ++i) { // NOLINT
-        EXPECT_TRUE(_testGame.add("TestElek" + std::to_string(i)));
+        _testGame.addPlayer("TestElek" + std::to_string(i));
     }
 
-    EXPECT_EQ(6, _testGame.howManyPlayers()); //NOLINT
+    EXPECT_EQ(6, _testGame.getNumberOfPlayers()); //NOLINT
 
-    EXPECT_THROW(_testGame.add("TestCrashElek"), out_of_range);
+    EXPECT_THROW(_testGame.addPlayer("TestCrashElek"), runtime_error);
 }
 
 TEST_F(GameTestFixture, TestRollNoPlayers) {
-    EXPECT_THROW(_testGame.roll(0), out_of_range);
+    EXPECT_THROW(_testGame.roll(0), runtime_error);
 }
 
 TEST_F(GameTestFixture, TestRollOnePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
-    EXPECT_EQ(1, _testGame.howManyPlayers());
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
+    _testGame.addPlayer("TestElek");
+    EXPECT_EQ(1, _testGame.getNumberOfPlayers());
+    EXPECT_EQ(std::prev(_testGame.getPlayers().end()), _testGame.getCurrentPlayerIt());
 
     _testGame.roll(5); // NOLINT
 
-    EXPECT_EQ(1, _testGame.howManyPlayers());
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
-    EXPECT_EQ(5, _testGame.getPlaces().at(_testGame.getCurrentPlayerId())); //NOLINT
-    EXPECT_EQ(0, _testGame.getPurses().at(_testGame.getCurrentPlayerId()));
-    EXPECT_FALSE(_testGame.getPenaltyBoxes().at(_testGame.getCurrentPlayerId()));
+    EXPECT_EQ(1, _testGame.getNumberOfPlayers());
+    EXPECT_EQ(_testGame.getPlayers().begin(), _testGame.getCurrentPlayerIt());
+    EXPECT_EQ(5, _testGame.getCurrentPlayerIt()->getPosition()); //NOLINT
+    EXPECT_EQ(0, _testGame.getCurrentPlayerIt()->getNumberOfCoins());
+    EXPECT_FALSE(_testGame.getCurrentPlayerIt()->isInPenalty());
 }
 
 TEST_F(GameTestFixture, TestRollPopOnePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
+    _testGame.addPlayer("TestElek");
 
     _testGame.roll(0);
 
@@ -140,7 +126,7 @@ TEST_F(GameTestFixture, TestRollPopOnePlayer) {
 }
 
 TEST_F(GameTestFixture, TestRollRockOnePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
+    _testGame.addPlayer("TestElek");
 
     _testGame.roll(3); // NOLINT
 
@@ -151,7 +137,7 @@ TEST_F(GameTestFixture, TestRollRockOnePlayer) {
 }
 
 TEST_F(GameTestFixture, TestRollScienceOnePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
+    _testGame.addPlayer("TestElek");
 
     _testGame.roll(1);
 
@@ -162,7 +148,7 @@ TEST_F(GameTestFixture, TestRollScienceOnePlayer) {
 }
 
 TEST_F(GameTestFixture, TestRollSportOnePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
+    _testGame.addPlayer("TestElek");
 
     _testGame.roll(2); // NOLINT
 
@@ -173,131 +159,80 @@ TEST_F(GameTestFixture, TestRollSportOnePlayer) {
 }
 
 TEST_F(GameTestFixture, TestWrongAnswereNoPlayer) {
-    EXPECT_THROW(_testGame.wrongAnswer(), out_of_range);
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
-    EXPECT_EQ(0, _testGame.getPurses().at(_testGame.getCurrentPlayerId()));
-    EXPECT_FALSE(_testGame.getPenaltyBoxes().at(_testGame.getCurrentPlayerId()));
+    EXPECT_THROW(_testGame.wrongAnswer(), runtime_error);
+    EXPECT_EQ(_testGame.getPlayers().end(), _testGame.getCurrentPlayerIt());
 }
 
 TEST_F(GameTestFixture, TestWrongAnswereOnePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
-
-    unsigned int _testEleksId = _testGame.getCurrentPlayerId();
-
-    EXPECT_TRUE(_testGame.wrongAnswer()); // NOTE: Next player is also TestElek
-    EXPECT_EQ(_testEleksId, _testGame.getCurrentPlayerId());
-    EXPECT_TRUE(_testGame.getPenaltyBoxes().at(_testEleksId));
-    EXPECT_TRUE(_testGame.getPenaltyBoxes().at(_testGame.getCurrentPlayerId()));
-}
-
-TEST_F(GameTestFixture, TestWrongAnswereMorePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
-    EXPECT_TRUE(_testGame.add("TestElek1"));
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
-
-    unsigned int _testEleksId = _testGame.getCurrentPlayerId();
+    _testGame.addPlayer("TestElek");
+    EXPECT_EQ(std::prev(_testGame.getPlayers().end()), _testGame.getCurrentPlayerIt());
 
     EXPECT_TRUE(_testGame.wrongAnswer());
-    EXPECT_EQ(_testEleksId + 1, _testGame.getCurrentPlayerId());
-    EXPECT_TRUE(_testGame.getPenaltyBoxes().at(_testEleksId));
-    EXPECT_FALSE(_testGame.getPenaltyBoxes().at(_testGame.getCurrentPlayerId()));
+    EXPECT_TRUE(_testGame.getCurrentPlayerIt()->isInPenalty());
 }
 
 TEST_F(GameTestFixture, TestRightAnswereNoPlayer) {
-    EXPECT_THROW(_testGame.wrongAnswer(), out_of_range);
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
-    EXPECT_EQ(0, _testGame.getPurses().at(_testGame.getCurrentPlayerId()));
-    EXPECT_FALSE(_testGame.getPenaltyBoxes().at(_testGame.getCurrentPlayerId()));
+    EXPECT_THROW(_testGame.wrongAnswer(), runtime_error);
+    EXPECT_EQ(_testGame.getPlayers().end(), _testGame.getCurrentPlayerIt());
 }
 
 TEST_F(GameTestFixture, TestRightAnswereOnePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
-
-    unsigned int _testEleksId = _testGame.getCurrentPlayerId();
-
-    EXPECT_TRUE(_testGame.wasCorrectlyAnswered()); // NOTE: Next player is also TestElek
-    EXPECT_EQ(_testEleksId, _testGame.getCurrentPlayerId());
-    EXPECT_FALSE(_testGame.getPenaltyBoxes().at(_testEleksId));
-    EXPECT_FALSE(_testGame.getPenaltyBoxes().at(_testGame.getCurrentPlayerId()));
-}
-
-TEST_F(GameTestFixture, TestRightAnswereMorePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
-    EXPECT_TRUE(_testGame.add("TestElek1"));
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
-
-    unsigned int _testEleksId = _testGame.getCurrentPlayerId();
+    _testGame.addPlayer("TestElek");
+    EXPECT_EQ(std::prev(_testGame.getPlayers().end()), _testGame.getCurrentPlayerIt());
 
     EXPECT_TRUE(_testGame.wasCorrectlyAnswered());
-    EXPECT_EQ(_testEleksId + 1, _testGame.getCurrentPlayerId());
-    EXPECT_FALSE(_testGame.getPenaltyBoxes().at(_testEleksId));
-    EXPECT_FALSE(_testGame.getPenaltyBoxes().at(_testGame.getCurrentPlayerId()));
+    EXPECT_FALSE(_testGame.getCurrentPlayerIt()->isInPenalty());
 }
 
 TEST_F(GameTestFixture, TestRightAnswereAfterWrongRollingOddMorePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
-    EXPECT_TRUE(_testGame.add("TestElek1"));
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
+    _testGame.addPlayer("TestElek");
+    _testGame.addPlayer("TestElek1");
+    EXPECT_EQ(std::prev(_testGame.getPlayers().end()), _testGame.getCurrentPlayerIt());
 
-    unsigned int _testEleksId = _testGame.getCurrentPlayerId();
+    auto _testEleksIt = _testGame.getCurrentPlayerIt();
 
     EXPECT_TRUE(_testGame.wrongAnswer());
 
     _testGame.roll(5); // NOLINT
 
-    EXPECT_EQ(_testEleksId + 1, _testGame.getCurrentPlayerId());
-    EXPECT_EQ(5, _testGame.getPlaces().at(_testGame.getCurrentPlayerId())); // NOLINT
-    EXPECT_TRUE(_testGame.getPenaltyBoxes().at(_testEleksId));
+    EXPECT_EQ(5, _testGame.getCurrentPlayerIt()->getPosition()); // NOLINT
+    EXPECT_TRUE(_testEleksIt->isInPenalty());
 
     for (size_t i = 2; i < 6; ++i) { // NOLINT
-        EXPECT_EQ(0, _testGame.getPlaces().at(i));
-        EXPECT_EQ(0, _testGame.getPurses().at(i));
-        EXPECT_FALSE(_testGame.getPenaltyBoxes().at(i));
+        EXPECT_THROW(_testGame.getPlayers().at(i), out_of_range);
     }
 
     EXPECT_TRUE(_testGame.wasCorrectlyAnswered());
 
-    EXPECT_EQ(_testEleksId, _testGame.getCurrentPlayerId());
-    EXPECT_TRUE(_testGame.getPenaltyBoxes().at(_testEleksId));
+    EXPECT_TRUE(_testEleksIt->isInPenalty());
 
     for (size_t i = 2; i < 6; ++i) { // NOLINT
-        EXPECT_EQ(0, _testGame.getPlaces().at(i));
-        EXPECT_EQ(0, _testGame.getPurses().at(i));
-        EXPECT_FALSE(_testGame.getPenaltyBoxes().at(i));
+        EXPECT_THROW(_testGame.getPlayers().at(i), out_of_range);
     }
 }
 
 TEST_F(GameTestFixture, TestRightAnswereAfterWrongRollingEvenMorePlayer) {
-    EXPECT_TRUE(_testGame.add("TestElek"));
-    EXPECT_TRUE(_testGame.add("TestElek1"));
-    EXPECT_EQ(0, _testGame.getCurrentPlayerId());
+    _testGame.addPlayer("TestElek");
+    _testGame.addPlayer("TestElek1");
+    EXPECT_EQ(std::prev(_testGame.getPlayers().end()), _testGame.getCurrentPlayerIt());
 
-    unsigned int _testEleksId = _testGame.getCurrentPlayerId();
+    auto _testEleksIt = _testGame.getCurrentPlayerIt();
 
     EXPECT_TRUE(_testGame.wrongAnswer());
 
     _testGame.roll(4); // NOLINT
 
-    EXPECT_EQ(_testEleksId + 1, _testGame.getCurrentPlayerId());
-    EXPECT_EQ(4, _testGame.getPlaces().at(_testGame.getCurrentPlayerId())); // NOLINT
-    EXPECT_TRUE(_testGame.getPenaltyBoxes().at(_testEleksId));
+    EXPECT_EQ(4, _testGame.getCurrentPlayerIt()->getPosition()); // NOLINT
+    EXPECT_TRUE(_testEleksIt->isInPenalty());
 
     for (size_t i = 2; i < 6; ++i) { // NOLINT
-        EXPECT_EQ(0, _testGame.getPlaces().at(i));
-        EXPECT_EQ(0, _testGame.getPurses().at(i));
-        EXPECT_FALSE(_testGame.getPenaltyBoxes().at(i));
+        EXPECT_THROW(_testGame.getPlayers().at(i), out_of_range);
     }
 
     EXPECT_TRUE(_testGame.wasCorrectlyAnswered());
-
-    EXPECT_EQ(_testEleksId, _testGame.getCurrentPlayerId());
-    EXPECT_TRUE(_testGame.getPenaltyBoxes().at(_testEleksId));
+    EXPECT_TRUE(_testEleksIt->isInPenalty());
 
     for (size_t i = 2; i < 6; ++i) { // NOLINT
-        EXPECT_EQ(0, _testGame.getPlaces().at(i));
-        EXPECT_EQ(0, _testGame.getPurses().at(i));
-        EXPECT_FALSE(_testGame.getPenaltyBoxes().at(i));
+        EXPECT_THROW(_testGame.getPlayers().at(i), out_of_range);
     }
 }
