@@ -20,7 +20,12 @@ public:
     bool wrongAnswer();
 
 protected:
-    string createRockQuestion(int index);
+    static constexpr std::size_t NUMBER_OF_QUESTIONS_PER_SUBJECT = 50;
+    static constexpr std::size_t NUMBER_OF_MAX_PLAYERS = 6;
+    static constexpr std::size_t NUMBER_OF_COINS_TO_WIN = 6;
+
+protected:
+    string createRockQuestion(std::size_t index);
     void   askQuestion();
     string currentCategory();
 
@@ -29,15 +34,15 @@ protected:
 protected:
     vector<string> players{};
 
-    std::array<int, 6> places{};
-    std::array<int, 6> purses{};
-    std::array<bool, 6> inPenaltyBox{};
+    std::array<int, NUMBER_OF_MAX_PLAYERS> places{};
+    std::array<int, NUMBER_OF_MAX_PLAYERS> purses{};
+    std::array<bool, NUMBER_OF_MAX_PLAYERS> inPenaltyBox{};
 
     list<string> popQuestions{};
     list<string> scienceQuestions{};
     list<string> sportsQuestions{};
     list<string> rockQuestions{};
 
-    unsigned int currentPlayer;
+    unsigned int currentPlayer{0};
     bool         isGettingOutOfPenaltyBox{false};
 };

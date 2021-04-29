@@ -1,35 +1,36 @@
 #include "game.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <iostream>
 #include <sstream>
 
 using namespace std;
+using std::size_t;
 
-Game::Game() : places{}, purses{}, currentPlayer(0) {
-    for (int i = 0; i < 50; i++) {
+Game::Game() {
+    for (size_t i = 0; i < NUMBER_OF_QUESTIONS_PER_SUBJECT; ++i) {
         ostringstream oss(ostringstream::out);
         oss << "Pop Question " << i;
 
-        popQuestions.push_back(oss.str());
+        popQuestions.emplace_back(oss.str());
 
-        char str[255];
-        sprintf(str, "Science Question %d", i);
-        scienceQuestions.push_back(str);
+        char str[255]; // NOLINT
+        sprintf(str, "Science Question %zu", i);
+        scienceQuestions.emplace_back(str);
 
-        char str1[255];
-        sprintf(str1, "Sports Question %d", i);
-        sportsQuestions.push_back(str1);
+        char str1[255]; // NOLINT
+        sprintf(str1, "Sports Question %zu", i);
+        sportsQuestions.emplace_back(str1);
 
-        rockQuestions.push_back(createRockQuestion(i));
+        rockQuestions.emplace_back(createRockQuestion(i));
     }
 }
 
-string Game::createRockQuestion(int index) {
-    char indexStr[127];
-    sprintf(indexStr, "Rock Question %d", index);
+string Game::createRockQuestion(size_t index) {
+    char indexStr[127]; // NOLINT
+    sprintf(indexStr, "Rock Question %zu", index);
     return indexStr;
 }
 
@@ -38,7 +39,7 @@ bool Game::isPlayable() {
 }
 
 bool Game::add(string playerName) {
-    players.push_back(playerName);
+    players.emplace_back(playerName);
     places.at(howManyPlayers()-1)       = 0;
     purses.at(howManyPlayers()-1)       = 0;
     inPenaltyBox.at(howManyPlayers()-1) = false;
@@ -62,8 +63,8 @@ void Game::roll(int roll) {
 
             cout << players.at(currentPlayer) << " is getting out of the penalty box" << endl;
             places.at(currentPlayer) = places.at(currentPlayer) + roll;
-            if (places.at(currentPlayer) > 11)
-                places.at(currentPlayer) = places.at(currentPlayer) - 12;
+            if (places.at(currentPlayer) > 11) // NOLINT
+                places.at(currentPlayer) = places.at(currentPlayer) - 12; // NOLINT
 
             cout << players.at(currentPlayer) << "'s new location is " << places.at(currentPlayer) << endl;
             cout << "The category is " << currentCategory() << endl;
@@ -75,8 +76,8 @@ void Game::roll(int roll) {
 
     } else {
         places.at(currentPlayer) = places.at(currentPlayer) + roll;
-        if (places.at(currentPlayer) > 11)
-            places.at(currentPlayer) = places.at(currentPlayer) - 12;
+        if (places.at(currentPlayer) > 11) // NOLINT
+            places.at(currentPlayer) = places.at(currentPlayer) - 12; // NOLINT
 
         cout << players.at(currentPlayer) << "'s new location is " << places.at(currentPlayer) << endl;
         cout << "The category is " << currentCategory() << endl;
@@ -104,23 +105,23 @@ void Game::askQuestion() {
 }
 
 string Game::currentCategory() {
-    if (places[currentPlayer] == 0)
+    if (places[currentPlayer] == 0) // NOLINT
         return "Pop";
-    if (places[currentPlayer] == 4)
+    if (places[currentPlayer] == 4) // NOLINT
         return "Pop";
-    if (places[currentPlayer] == 8)
+    if (places[currentPlayer] == 8) // NOLINT
         return "Pop";
-    if (places[currentPlayer] == 1)
+    if (places[currentPlayer] == 1) // NOLINT
         return "Science";
-    if (places[currentPlayer] == 5)
+    if (places[currentPlayer] == 5) // NOLINT
         return "Science";
-    if (places[currentPlayer] == 9)
+    if (places[currentPlayer] == 9) // NOLINT
         return "Science";
-    if (places[currentPlayer] == 2)
+    if (places[currentPlayer] == 2) // NOLINT
         return "Sports";
-    if (places[currentPlayer] == 6)
+    if (places[currentPlayer] == 6) // NOLINT
         return "Sports";
-    if (places[currentPlayer] == 10)
+    if (places[currentPlayer] == 10) // NOLINT
         return "Sports";
     return "Rock";
 }
@@ -171,5 +172,5 @@ bool Game::wrongAnswer() {
 }
 
 bool Game::didPlayerWin() {
-    return !(purses[currentPlayer] == 6);
+    return !(purses[currentPlayer] == NUMBER_OF_COINS_TO_WIN);
 }

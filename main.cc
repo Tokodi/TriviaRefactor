@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "game.h"
 
@@ -13,9 +13,9 @@ int main() {
     aGame.add("Sue");
 
     do {
-        aGame.roll(rand() % 5 + 1);
+        aGame.roll(rand() % 5 + 1); // NOLINT
 
-        if (rand() % 9 == 7) {
+        if (rand() % 9 == 7) { // NOLINT
             notAWinner = aGame.wrongAnswer();
         } else {
             notAWinner = aGame.wasCorrectlyAnswered();
