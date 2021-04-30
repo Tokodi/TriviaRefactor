@@ -9,5 +9,6 @@ IMAGE_NAME=$1
 
 docker run                                  \
     -ti                                     \
+    -v $HOME:/home/dockeruser               \
     ${IMAGE_NAME}                           \
     bash
