@@ -17,7 +17,8 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    model
+    controller
 )
 
+add_subdirectory(controller)
 add_subdirectory(model)

@@ -1,21 +1,20 @@
-#include <cstdlib>
+#include <exception>
+#include <iostream>
 
-#include "game.h"
+#include "controller.h"
 
 int main() {
-    srand(1);
-    Trivia::Model::Game game;
+    try {
+        Trivia::Controller::Controller _gameController;
 
-    game.addPlayer("Chet");
-    game.addPlayer("Pat");
-    game.addPlayer("Sue");
+        _gameController.addPlayer("Chet");
+        _gameController.addPlayer("Pat");
+        _gameController.addPlayer("Sue");
 
-    do {
-        game.step(rand() % 5 + 1); // NOLINT
-        if (rand() % 9 == 7) { // NOLINT
-            game.wrongAnswer();
-        } else {
-            game.correctAnswer();
-        }
-    } while (!game.isOver());
+        _gameController.startGame();
+    } catch (std::runtime_error& ex) {
+        std::cout << "Runtime error: " << ex.what() << std::endl;
+    } catch (...) {
+        std::cout << "Unknown exception occured" << std::endl;
+    }
 }
