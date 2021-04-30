@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "board.h"
 #include "player.h"
 
 namespace Trivia::Model {
@@ -36,16 +37,16 @@ private:
 
 protected:
     void   askQuestion();
-    std::string currentCategory();
 
 protected:
+    Board _board{};
     std::vector<Player> _players{};
     std::vector<Player>::iterator _currentPlayer{_players.end()};
 
-    std::queue<std::string> popQuestions{};
-    std::queue<std::string> scienceQuestions{};
-    std::queue<std::string> sportsQuestions{};
-    std::queue<std::string> rockQuestions{};
+    std::queue<std::string> _popQuestions{};
+    std::queue<std::string> _scienceQuestions{};
+    std::queue<std::string> _sportsQuestions{};
+    std::queue<std::string> _rockQuestions{};
 };
 
 } // namespace Trivia::Model

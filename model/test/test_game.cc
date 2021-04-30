@@ -24,19 +24,19 @@ public:
     }
 
     [[nodiscard]] const queue<string>& getPopQuestions() const {
-        return popQuestions;
+        return _popQuestions;
     }
 
     [[nodiscard]] const queue<string>& getRockQuestions() const {
-        return rockQuestions;
+        return _rockQuestions;
     }
 
     [[nodiscard]] const queue<string>& getScienceQuestions() const {
-        return scienceQuestions;
+        return _scienceQuestions;
     }
 
     [[nodiscard]] const queue<string>& getSportQuestions() const {
-        return sportsQuestions;
+        return _sportsQuestions;
     }
 
     [[nodiscard]]vector<Trivia::Model::Player>::iterator getCurrentPlayerIt() const {

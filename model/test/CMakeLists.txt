@@ -1,6 +1,7 @@
 set(TEST_NAME test_trivia_model)
 
 add_executable(${TEST_NAME}
+    test_board.cc
     test_game.cc
     test_main.cc
     test_player.cc

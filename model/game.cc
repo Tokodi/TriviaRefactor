@@ -97,10 +97,10 @@ bool Game::isOver() const {
 
 void Game::initializeDecks() {
     for (size_t i = 0; i < NUMBER_OF_QUESTIONS_PER_SUBJECT; i++) {
-        popQuestions.emplace("Pop Question " + std::to_string(i));
-        scienceQuestions.emplace("Science Question " + std::to_string(i));
-        sportsQuestions.emplace("Sports Question " + std::to_string(i));
-        rockQuestions.emplace("Rock Question " + std::to_string(i));
+        _popQuestions.emplace("Pop Question " + std::to_string(i));
+        _scienceQuestions.emplace("Science Question " + std::to_string(i));
+        _sportsQuestions.emplace("Sports Question " + std::to_string(i));
+        _rockQuestions.emplace("Rock Question " + std::to_string(i));
     }
 }
 
@@ -109,45 +109,28 @@ bool Game::isPlayable() const {
 }
 
 void Game::askQuestion() {
-    cout << "The category is " << currentCategory() << endl;
-    if (currentCategory() == "Pop") {
-        cout << popQuestions.front() << endl;
-        popQuestions.pop();
+    switch (_board.getField(_currentPlayer->getPosition())) {
+        case Field::POP:
+            cout << "The category is Pop" << endl;
+            cout << _popQuestions.front() << endl;
+            _popQuestions.pop();
+            break;
+        case Field::SCIENCE:
+            cout << "The category is Science" << endl;
+            cout << _scienceQuestions.front() << endl;
+            _scienceQuestions.pop();
+            break;
+        case Field::SPORTS:
+            cout << "The category is Sports" << endl;
+            cout << _sportsQuestions.front() << endl;
+            _sportsQuestions.pop();
+            break;
+        case Field::ROCK:
+            cout << "The category is Rock" << endl;
+            cout << _rockQuestions.front() << endl;
+            _rockQuestions.pop();
+            break;
     }
-    if (currentCategory() == "Science") {
-        cout << scienceQuestions.front() << endl;
-        scienceQuestions.pop();
-    }
-    if (currentCategory() == "Sports") {
-        cout << sportsQuestions.front() << endl;
-        sportsQuestions.pop();
-    }
-    if (currentCategory() == "Rock") {
-        cout << rockQuestions.front() << endl;
-        rockQuestions.pop();
-    }
-}
-
-string Game::currentCategory() {
-    if (_currentPlayer->getPosition() == 0) // NOLINT
-        return "Pop";
-    if (_currentPlayer->getPosition() == 4) // NOLINT
-        return "Pop";
-    if (_currentPlayer->getPosition() == 8) // NOLINT
-        return "Pop";
-    if (_currentPlayer->getPosition() == 1) // NOLINT
-        return "Science";
-    if (_currentPlayer->getPosition() == 5) // NOLINT
-        return "Science";
-    if (_currentPlayer->getPosition() == 9) // NOLINT
-        return "Science";
-    if (_currentPlayer->getPosition() == 2) // NOLINT
-        return "Sports";
-    if (_currentPlayer->getPosition() == 6) // NOLINT
-        return "Sports";
-    if (_currentPlayer->getPosition() == 10) // NOLINT
-        return "Sports";
-    return "Rock";
 }
 
 } //  namespace Trivia::Model
