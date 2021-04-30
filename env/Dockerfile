@@ -15,7 +15,8 @@ RUN apt-get update && apt-get install -y \
     git \
     googletest \
     libgtest-dev \
-    make 
+    make \
+    valgrind
 
 # Create and set user
 RUN useradd -ms /bin/bash dockeruser
