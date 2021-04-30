@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     clang-format \
     clang-tidy \
     cmake \
+    cppcheck \
     g++ \
     gdb \
     git \

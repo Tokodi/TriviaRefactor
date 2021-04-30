@@ -19,3 +19,4 @@ set(CMAKE_CXX_FLAGS "${C_CXX_FLAGS} ${CXX_WARNINGS}")
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
 include(clangtidy)
+include(cppcheck)

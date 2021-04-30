@@ -7,7 +7,7 @@ namespace Trivia::Model {
 
 class Player {
 public:
-    Player(std::string name);
+    explicit Player(std::string name);
 
     void addCoin();
     void toPenalty();
