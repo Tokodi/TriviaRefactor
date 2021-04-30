@@ -2,23 +2,20 @@
 
 #include "game.h"
 
-static bool notAWinner;
-
 int main() {
     srand(1);
-    Trivia::Model::Game aGame;
+    Trivia::Model::Game game;
 
-    aGame.addPlayer("Chet");
-    aGame.addPlayer("Pat");
-    aGame.addPlayer("Sue");
+    game.addPlayer("Chet");
+    game.addPlayer("Pat");
+    game.addPlayer("Sue");
 
     do {
-        aGame.roll(rand() % 5 + 1); // NOLINT
-
+        game.step(rand() % 5 + 1); // NOLINT
         if (rand() % 9 == 7) { // NOLINT
-            notAWinner = aGame.wrongAnswer();
+            game.wrongAnswer();
         } else {
-            notAWinner = aGame.wasCorrectlyAnswered();
+            game.correctAnswer();
         }
-    } while (notAWinner);
+    } while (!game.isOver());
 }

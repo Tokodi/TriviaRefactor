@@ -1,17 +1,17 @@
+#include <gtest/gtest.h>
+
+#include <exception>
+#include <iostream>
+#include <queue>
+#include <string>
+
 #include "game.h"
 #include "player.h"
 
-#include <gtest/gtest.h>
-
-#include <iostream>
-#include <list>
-#include <string>
-#include <exception>
-
 using std::array;
 using std::cout;
-using std::list;
 using std::out_of_range;
+using std::queue;
 using std::runtime_error;
 using std::size_t;
 using std::string;
@@ -23,19 +23,19 @@ public:
         return _players;
     }
 
-    [[nodiscard]] const list<string>& getPopQuestions() const {
+    [[nodiscard]] const queue<string>& getPopQuestions() const {
         return popQuestions;
     }
 
-    [[nodiscard]] const list<string>& getRockQuestions() const {
+    [[nodiscard]] const queue<string>& getRockQuestions() const {
         return rockQuestions;
     }
 
-    [[nodiscard]] const list<string>& getScienceQuestions() const {
+    [[nodiscard]] const queue<string>& getScienceQuestions() const {
         return scienceQuestions;
     }
 
-    [[nodiscard]] const list<string>& getSportQuestions() const {
+    [[nodiscard]] const queue<string>& getSportQuestions() const {
         return sportsQuestions;
     }
 
@@ -58,7 +58,6 @@ protected:
 };
 
 TEST_F(GameTestFixture, TestGameInitialization) {
-    EXPECT_FALSE(_testGame.isPlayable());
     EXPECT_EQ(0, _testGame.getNumberOfPlayers());
     EXPECT_EQ(_testGame.getPlayers().end(), _testGame.getCurrentPlayerIt());
 
@@ -97,7 +96,7 @@ TEST_F(GameTestFixture, TestPlayerAdditionTooMany) {
 }
 
 TEST_F(GameTestFixture, TestRollNoPlayers) {
-    EXPECT_THROW(_testGame.roll(0), runtime_error);
+    EXPECT_THROW(_testGame.step(0), runtime_error);
 }
 
 TEST_F(GameTestFixture, TestRollOnePlayer) {
@@ -105,7 +104,7 @@ TEST_F(GameTestFixture, TestRollOnePlayer) {
     EXPECT_EQ(1, _testGame.getNumberOfPlayers());
     EXPECT_EQ(std::prev(_testGame.getPlayers().end()), _testGame.getCurrentPlayerIt());
 
-    _testGame.roll(5); // NOLINT
+    _testGame.step(5); // NOLINT
 
     EXPECT_EQ(1, _testGame.getNumberOfPlayers());
     EXPECT_EQ(_testGame.getPlayers().begin(), _testGame.getCurrentPlayerIt());
@@ -117,7 +116,7 @@ TEST_F(GameTestFixture, TestRollOnePlayer) {
 TEST_F(GameTestFixture, TestRollPopOnePlayer) {
     _testGame.addPlayer("TestElek");
 
-    _testGame.roll(0);
+    _testGame.step(0);
 
     EXPECT_EQ(49, _testGame.getPopQuestions().size()); // NOLINT
     EXPECT_EQ(50, _testGame.getRockQuestions().size()); // NOLINT
@@ -128,7 +127,7 @@ TEST_F(GameTestFixture, TestRollPopOnePlayer) {
 TEST_F(GameTestFixture, TestRollRockOnePlayer) {
     _testGame.addPlayer("TestElek");
 
-    _testGame.roll(3); // NOLINT
+    _testGame.step(3); // NOLINT
 
     EXPECT_EQ(50, _testGame.getPopQuestions().size()); // NOLINT
     EXPECT_EQ(49, _testGame.getRockQuestions().size()); // NOLINT
@@ -139,7 +138,7 @@ TEST_F(GameTestFixture, TestRollRockOnePlayer) {
 TEST_F(GameTestFixture, TestRollScienceOnePlayer) {
     _testGame.addPlayer("TestElek");
 
-    _testGame.roll(1);
+    _testGame.step(1);
 
     EXPECT_EQ(50, _testGame.getPopQuestions().size()); // NOLINT
     EXPECT_EQ(50, _testGame.getRockQuestions().size()); // NOLINT
@@ -150,7 +149,7 @@ TEST_F(GameTestFixture, TestRollScienceOnePlayer) {
 TEST_F(GameTestFixture, TestRollSportOnePlayer) {
     _testGame.addPlayer("TestElek");
 
-    _testGame.roll(2); // NOLINT
+    _testGame.step(2); // NOLINT
 
     EXPECT_EQ(50, _testGame.getPopQuestions().size()); // NOLINT
     EXPECT_EQ(50, _testGame.getRockQuestions().size()); // NOLINT
@@ -167,7 +166,7 @@ TEST_F(GameTestFixture, TestWrongAnswereOnePlayer) {
     _testGame.addPlayer("TestElek");
     EXPECT_EQ(std::prev(_testGame.getPlayers().end()), _testGame.getCurrentPlayerIt());
 
-    EXPECT_TRUE(_testGame.wrongAnswer());
+    _testGame.wrongAnswer();
     EXPECT_TRUE(_testGame.getCurrentPlayerIt()->isInPenalty());
 }
 
@@ -180,7 +179,7 @@ TEST_F(GameTestFixture, TestRightAnswereOnePlayer) {
     _testGame.addPlayer("TestElek");
     EXPECT_EQ(std::prev(_testGame.getPlayers().end()), _testGame.getCurrentPlayerIt());
 
-    EXPECT_TRUE(_testGame.wasCorrectlyAnswered());
+    _testGame.correctAnswer();
     EXPECT_FALSE(_testGame.getCurrentPlayerIt()->isInPenalty());
 }
 
@@ -191,9 +190,8 @@ TEST_F(GameTestFixture, TestRightAnswereAfterWrongRollingOddMorePlayer) {
 
     auto _testEleksIt = _testGame.getCurrentPlayerIt();
 
-    EXPECT_TRUE(_testGame.wrongAnswer());
-
-    _testGame.roll(5); // NOLINT
+    _testGame.wrongAnswer();
+    _testGame.step(5); // NOLINT
 
     EXPECT_EQ(5, _testGame.getCurrentPlayerIt()->getPosition()); // NOLINT
     EXPECT_TRUE(_testEleksIt->isInPenalty());
@@ -202,7 +200,7 @@ TEST_F(GameTestFixture, TestRightAnswereAfterWrongRollingOddMorePlayer) {
         EXPECT_THROW(_testGame.getPlayers().at(i), out_of_range);
     }
 
-    EXPECT_TRUE(_testGame.wasCorrectlyAnswered());
+    _testGame.correctAnswer();
 
     EXPECT_TRUE(_testEleksIt->isInPenalty());
 
@@ -218,9 +216,9 @@ TEST_F(GameTestFixture, TestRightAnswereAfterWrongRollingEvenMorePlayer) {
 
     auto _testEleksIt = _testGame.getCurrentPlayerIt();
 
-    EXPECT_TRUE(_testGame.wrongAnswer());
+    _testGame.wrongAnswer();
 
-    _testGame.roll(4); // NOLINT
+    _testGame.step(4); // NOLINT
 
     EXPECT_EQ(4, _testGame.getCurrentPlayerIt()->getPosition()); // NOLINT
     EXPECT_TRUE(_testEleksIt->isInPenalty());
@@ -229,7 +227,7 @@ TEST_F(GameTestFixture, TestRightAnswereAfterWrongRollingEvenMorePlayer) {
         EXPECT_THROW(_testGame.getPlayers().at(i), out_of_range);
     }
 
-    EXPECT_TRUE(_testGame.wasCorrectlyAnswered());
+    _testGame.correctAnswer();
     EXPECT_TRUE(_testEleksIt->isInPenalty());
 
     for (size_t i = 2; i < 6; ++i) { // NOLINT
