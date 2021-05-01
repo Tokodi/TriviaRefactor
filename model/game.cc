@@ -2,14 +2,12 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <sstream>
 
-using std::cout;
-using std::endl;
 using std::move;
 using std::next;
 using std::ostringstream;
+using std::pair;
 using std::prev;
 using std::runtime_error;
 using std::size_t;
@@ -30,14 +28,11 @@ void Game::addPlayer(string name) {
 
     _players.emplace_back(move(name));
     _currentPlayer = prev(_players.end());
-
-    cout << _players.back().getName() << " was added" << endl;
-    cout << "They are player number " << getNumberOfPlayers() << endl;
 }
 
 void Game::step() {
     if (!isPlayable())
-        throw runtime_error("Not enough players");
+        throw runtime_error("Invalid operation");
 
     if (next(_currentPlayer) == _players.end()) {
         _currentPlayer = _players.begin();
@@ -45,36 +40,30 @@ void Game::step() {
         ++_currentPlayer;
     }
 
-    cout << _currentPlayer->getName() << " is the current player" << endl;
+    _dice.roll();
 
-    _diceValue = _dice.roll();
-    cout << "They have rolled a " << _diceValue << endl;
-
+    _isCurrentPlayerJustLeftPenalty = false;
     if (_currentPlayer->isInPenalty()) {
-        if (_diceValue % 2 == 0) {
-            cout << _currentPlayer->getName() << " is not getting out of the penalty box" << endl;
+        if (_dice.getValue() % 2 == 0) {
             return;
         } else {
             _currentPlayer->leavePenalty();
-            cout << _currentPlayer->getName() << " is getting out of the penalty box" << endl;
+            _isCurrentPlayerJustLeftPenalty = true;
         }
     }
-    _currentPlayer->step(_diceValue);
+    _currentPlayer->step(_dice.getValue());
 
-    cout << _currentPlayer->getName() << "'s new location is " << _currentPlayer->getPosition() << endl;
-    askQuestion();
+    setCurrentQuestion();
 }
 
 void Game::correctAnswer() {
     if (!isPlayable())
-        throw runtime_error("Not enough players");
+        throw runtime_error("Invalid operation");
 
     if (_currentPlayer->isInPenalty())
         return;
 
-    cout << "Answer was correct!!!!" << endl;
     _currentPlayer->addCoin();
-    cout << _currentPlayer->getName() << " now has " << _currentPlayer->getNumberOfCoins() << " Gold Coins." << endl;
 
     if (NUMBER_OF_COINS_TO_WIN == _currentPlayer->getNumberOfCoins()) {
         _isGameOver = true;
@@ -84,13 +73,14 @@ void Game::correctAnswer() {
 
 void Game::wrongAnswer() {
     if (!isPlayable())
-        throw runtime_error("Not enough players");
+        throw runtime_error("Invalid operation");
 
-    cout << "Question was incorrectly answered" << endl;
-    cout << _currentPlayer->getName() << " was sent to the penalty box" << endl;
     _currentPlayer->toPenalty();
 }
 
+const Dice& Game::getDice() const {
+    return _dice;
+}
 
 const Player& Game::getCurrentPlayer() const {
     if (_currentPlayer == _players.end())
@@ -99,12 +89,16 @@ const Player& Game::getCurrentPlayer() const {
     return *_currentPlayer;
 }
 
+bool Game::isCurrentPlayerJustLeftPenalty() const {
+    return _isCurrentPlayerJustLeftPenalty;
+}
+
 size_t Game::getNumberOfPlayers() const {
     return _players.size();
 }
 
-uint32_t Game::getDiceValue() const {
-    return _diceValue;
+const pair<string, string>& Game::getCurrentQuestion() const {
+    return _currentQuestion;
 }
 
 bool Game::isOver() const {
@@ -124,26 +118,22 @@ bool Game::isPlayable() const {
     return (getNumberOfPlayers() >= NUMBER_OF_MIN_PLAYERS && !isOver());
 }
 
-void Game::askQuestion() {
+void Game::setCurrentQuestion() {
     switch (_board.getField(_currentPlayer->getPosition())) {
         case Field::POP:
-            cout << "The category is Pop" << endl;
-            cout << _popQuestions.front() << endl;
+            _currentQuestion = {"Pop", _popQuestions.front()};
             _popQuestions.pop();
             break;
         case Field::SCIENCE:
-            cout << "The category is Science" << endl;
-            cout << _scienceQuestions.front() << endl;
+            _currentQuestion = {"Science", _scienceQuestions.front()};
             _scienceQuestions.pop();
             break;
         case Field::SPORTS:
-            cout << "The category is Sports" << endl;
-            cout << _sportsQuestions.front() << endl;
+            _currentQuestion = {"Sports", _sportsQuestions.front()};
             _sportsQuestions.pop();
             break;
         case Field::ROCK:
-            cout << "The category is Rock" << endl;
-            cout << _rockQuestions.front() << endl;
+            _currentQuestion = {"Rock", _rockQuestions.front()};
             _rockQuestions.pop();
             break;
     }

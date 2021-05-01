@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <queue>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "board.h"
@@ -22,8 +23,11 @@ public:
     void wrongAnswer();
 
     [[nodiscard]] const Player& getCurrentPlayer() const;
+    [[nodiscard]] const Dice& getDice() const;
     [[nodiscard]] std::size_t getNumberOfPlayers() const;
-    [[nodiscard]] std::uint32_t getDiceValue() const;
+    [[nodiscard]] const std::pair<std::string, std::string>& getCurrentQuestion() const;
+
+    [[nodiscard]] bool isCurrentPlayerJustLeftPenalty() const;
     [[nodiscard]] bool isOver() const;
 
 private:
@@ -34,7 +38,7 @@ private:
 
 private:
     void initializeDecks();
-    void   askQuestion();
+    void setCurrentQuestion();
 
     [[nodiscard]] bool isPlayable() const;
 
@@ -42,16 +46,19 @@ private:
     // TODO: Fixed seed while developement
     Dice _dice{4}; // NOLINT
     Board _board{};
+
     std::vector<Player> _players{};
     std::vector<Player>::iterator _currentPlayer{_players.end()};
 
     bool _isGameOver{false};
-    std::uint32_t _diceValue{0};
+    bool _isCurrentPlayerJustLeftPenalty{false};
 
     std::queue<std::string> _popQuestions{};
     std::queue<std::string> _scienceQuestions{};
     std::queue<std::string> _sportsQuestions{};
     std::queue<std::string> _rockQuestions{};
+
+    std::pair<std::string, std::string> _currentQuestion{};
 };
 
 } // namespace Trivia::Model

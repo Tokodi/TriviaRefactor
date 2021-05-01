@@ -1,7 +1,7 @@
-set(LIB_NAME controller)
+set(LIB_NAME view)
 
 add_library(${LIB_NAME} STATIC
-    controller.cc
+    text_view.cc
 )
 
 target_include_directories(${LIB_NAME}
@@ -10,5 +10,4 @@ target_include_directories(${LIB_NAME}
 
 target_link_libraries(${LIB_NAME}
     model
-    view
 )

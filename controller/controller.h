@@ -3,6 +3,7 @@
 #include <string>
 
 #include "game.h"
+#include "text_view.h"
 
 namespace Trivia::Controller {
 
@@ -15,6 +16,7 @@ public:
 
 private:
     Model::Game _game{};
+    View::TextView _view{_game};
 };
 
 }  // namespace Trivia::Controller

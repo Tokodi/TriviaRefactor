@@ -14,8 +14,12 @@ Dice::Dice(std::uint32_t seed)
     : _generator(seed) {
 }
 
-uint32_t Dice::roll() {
-   return _distribution(_generator);
+void Dice::roll() {
+    _currentValue = _distribution(_generator);
+}
+
+uint32_t Dice::getValue() const {
+   return _currentValue;
 }
 
 }  // namespace Trivia::Model
