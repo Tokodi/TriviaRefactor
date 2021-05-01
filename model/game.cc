@@ -2,16 +2,19 @@
 
 #include <cstdio>
 #include <cstdlib>
-
 #include <iostream>
 #include <sstream>
 
 using std::cout;
 using std::endl;
+using std::move;
+using std::next;
 using std::ostringstream;
+using std::prev;
 using std::runtime_error;
 using std::size_t;
 using std::string;
+using std::to_string;
 using std::uint32_t;
 
 namespace Trivia::Model {
@@ -25,37 +28,38 @@ void Game::addPlayer(string name) {
         throw runtime_error("Maximum player number reached");
     }
 
-    _players.emplace_back(std::move(name));
-    _currentPlayer = std::prev(_players.end());
+    _players.emplace_back(move(name));
+    _currentPlayer = prev(_players.end());
 
     cout << _players.back().getName() << " was added" << endl;
     cout << "They are player number " << getNumberOfPlayers() << endl;
 }
 
-void Game::step(uint32_t value) {
+void Game::step() {
     if (!isPlayable())
         throw runtime_error("Not enough players");
 
-    if (std::next(_currentPlayer) == _players.end()) {
+    if (next(_currentPlayer) == _players.end()) {
         _currentPlayer = _players.begin();
     } else {
         ++_currentPlayer;
     }
 
     cout << _currentPlayer->getName() << " is the current player" << endl;
-    cout << "They have rolled a " << value << endl;
+
+    _diceValue = _dice.roll();
+    cout << "They have rolled a " << _diceValue << endl;
 
     if (_currentPlayer->isInPenalty()) {
-        if (value % 2 != 0) {
-            _currentPlayer->leavePenalty();
-            cout << _currentPlayer->getName() << " is getting out of the penalty box" << endl;
-        } else {
+        if (_diceValue % 2 == 0) {
             cout << _currentPlayer->getName() << " is not getting out of the penalty box" << endl;
             return;
+        } else {
+            _currentPlayer->leavePenalty();
+            cout << _currentPlayer->getName() << " is getting out of the penalty box" << endl;
         }
-
     }
-    _currentPlayer->step(value);
+    _currentPlayer->step(_diceValue);
 
     cout << _currentPlayer->getName() << "'s new location is " << _currentPlayer->getPosition() << endl;
     askQuestion();
@@ -72,7 +76,7 @@ void Game::correctAnswer() {
     _currentPlayer->addCoin();
     cout << _currentPlayer->getName() << " now has " << _currentPlayer->getNumberOfCoins() << " Gold Coins." << endl;
 
-    if (NUMBER_OF_COINS_TO_WIN == _currentPlayer->getNumberOfCoins()){
+    if (NUMBER_OF_COINS_TO_WIN == _currentPlayer->getNumberOfCoins()) {
         _isGameOver = true;
         return;
     }
@@ -87,8 +91,20 @@ void Game::wrongAnswer() {
     _currentPlayer->toPenalty();
 }
 
+
+const Player& Game::getCurrentPlayer() const {
+    if (_currentPlayer == _players.end())
+        throw runtime_error("Not enough players");
+
+    return *_currentPlayer;
+}
+
 size_t Game::getNumberOfPlayers() const {
     return _players.size();
+}
+
+uint32_t Game::getDiceValue() const {
+    return _diceValue;
 }
 
 bool Game::isOver() const {
@@ -97,15 +113,15 @@ bool Game::isOver() const {
 
 void Game::initializeDecks() {
     for (size_t i = 0; i < NUMBER_OF_QUESTIONS_PER_SUBJECT; i++) {
-        _popQuestions.emplace("Pop Question " + std::to_string(i));
-        _scienceQuestions.emplace("Science Question " + std::to_string(i));
-        _sportsQuestions.emplace("Sports Question " + std::to_string(i));
-        _rockQuestions.emplace("Rock Question " + std::to_string(i));
+        _popQuestions.emplace("Pop Question " + to_string(i));
+        _scienceQuestions.emplace("Science Question " + to_string(i));
+        _sportsQuestions.emplace("Sports Question " + to_string(i));
+        _rockQuestions.emplace("Rock Question " + to_string(i));
     }
 }
 
 bool Game::isPlayable() const {
-    return (getNumberOfPlayers() >= 1); // TODO: Default was 2
+    return (getNumberOfPlayers() >= NUMBER_OF_MIN_PLAYERS && !isOver());
 }
 
 void Game::askQuestion() {

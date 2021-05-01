@@ -15,10 +15,10 @@ void Controller::addPlayer(string name) {
 }
 
 void Controller::startGame() {
-    srand(1); // TODO: Fix seed while refactoring
+    srand(1); // TODO: Fixed seed while refactoring
 
     while (!_game.isOver()) {
-        _game.step(rand() % 5 + 1); // NOLINT
+        _game.step();
         if (rand() % 9 == 7) { // NOLINT
             _game.wrongAnswer();
         } else {

@@ -2,6 +2,7 @@ set(LIB_NAME model)
 
 add_library(${LIB_NAME} STATIC
     board.cc
+    dice.cc
     game.cc
     player.cc
 )
