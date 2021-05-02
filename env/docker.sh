@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -ne 1 ]; then
-    echo "Usage: ./docker.sh <container_name>"
+    echo "Usage: ./docker.sh <image_name>"
     exit 0
 fi
 
