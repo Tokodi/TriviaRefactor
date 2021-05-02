@@ -21,7 +21,10 @@ set(CXX_WARNINGS "${CXX_WARNINGS} -Wmissing-noreturn")
 set(CXX_WARNINGS "${CXX_WARNINGS} -Wno-deprecated-declarations")
 set(CXX_WARNINGS "${CXX_WARNINGS} -Wno-system-headers")
 set(CXX_WARNINGS "${CXX_WARNINGS} -Wno-unknown-warning-option")
-set(CXX_WARNINGS "${CXX_WARNINGS} -Wnoexcept")
+# NOTE: Removed because of:
+#    noexcept-expression evaluates to 'false' because of a call to 'std::bernoulli_distribution::bernoulli_distribution(double)
+# https://stackoverflow.com/questions/59380633/what-is-the-meaning-of-noexcept-expression-evaluates-to-false-because-of-a-ca
+# set(CXX_WARNINGS "${CXX_WARNINGS} -Wnoexcept")
 set(CXX_WARNINGS "${CXX_WARNINGS} -Wnon-virtual-dtor")
 set(CXX_WARNINGS "${CXX_WARNINGS} -Wnull-dereference")
 set(CXX_WARNINGS "${CXX_WARNINGS} -Wold-style-cast")

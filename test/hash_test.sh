@@ -15,7 +15,10 @@ fi
 #ORIGINAL_HASH=31fd0fa900e48ab0454a074e1bc5b6432383bc86
 
 #NOTE: Introduction of Dice class caused new random numbers
-ORIGINAL_HASH=fb6d0876f51d58bc0a01bcbff67606458b8666ad
+#ORIGINAL_HASH=fb6d0876f51d58bc0a01bcbff67606458b8666ad
+
+#NOTE: Refactor of controller's random generator
+ORIGINAL_HASH=f5b09ffa87daabf0b39592dbe9da72ce0cd00943
 NEW_HASH="$(sha1sum $1 | awk '{ print $1 }')"
 
 if [ $ORIGINAL_HASH = $NEW_HASH ]; then

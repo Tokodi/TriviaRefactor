@@ -1,9 +1,11 @@
 #include "controller.h"
 
-#include <iostream>
 #include <exception>
+#include <functional>
+#include <iostream>
 
 using std::cout;
+using std::bind;
 using std::endl;
 using std::runtime_error;
 using std::string;
@@ -16,20 +18,22 @@ void Controller::addPlayer(string name) {
 }
 
 void Controller::startGame() {
-    srand(1); // TODO: Fixed seed while refactoring
-
     while (!_game.isOver()) {
         _game.step();
         _view.gameStepped();
 
-        if (rand() % 9 == 7) { // NOLINT
-            _game.wrongAnswer();
-            _view.wrongAnswer();
-        } else {
+        if (isCorrectAnswer()) {
             _game.correctAnswer();
             _view.correctAnswer();
+        } else {
+            _game.wrongAnswer();
+            _view.wrongAnswer();
         }
     }
+}
+
+bool Controller::isCorrectAnswer() {
+    return _distribution(_generator);
 }
 
 }  // namespace Trivia::Controller
