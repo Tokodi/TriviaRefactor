@@ -24,7 +24,7 @@ private:
     bool isCorrectAnswer();
 
 private:
-    Model::Game    _game{};
+    Model::Game    _game{4};
     View::TextView _view{_game};
 
     // TODO: Fixed seed while developement

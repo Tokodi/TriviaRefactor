@@ -10,8 +10,8 @@ using std::size_t;
 
 using Trivia::Model::Game;
 
-TEST(GameTestFixture, TestGameInitialization) {
-    Game testGame{};
+TEST(GameTest, TestGameInitialization) {
+    Game testGame{4};
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-result"
@@ -25,8 +25,8 @@ TEST(GameTestFixture, TestGameInitialization) {
     EXPECT_FALSE(testGame.isOver());
 }
 
-TEST(GameTestFixture, TestPlayerAdditionOne) {
-    Game testGame{};
+TEST(GameTest, TestPlayerAdditionOne) {
+    Game testGame{4};
 
     testGame.addPlayer("TestElek");
 
@@ -39,8 +39,8 @@ TEST(GameTestFixture, TestPlayerAdditionOne) {
     EXPECT_FALSE(testGame.isOver());
 }
 
-TEST(GameTestFixture, TestPlayerAdditionMore) {
-    Game testGame{};
+TEST(GameTest, TestPlayerAdditionMore) {
+    Game testGame{4};
 
     testGame.addPlayer("TestElek");
     testGame.addPlayer("TestElek2");
@@ -55,8 +55,8 @@ TEST(GameTestFixture, TestPlayerAdditionMore) {
     EXPECT_FALSE(testGame.isOver());
 }
 
-TEST(GameTestFixture, TestPlayerAdditionTooMany) {
-    Game testGame{};
+TEST(GameTest, TestPlayerAdditionTooMany) {
+    Game testGame{4};
 
     for (size_t i = 0; i < 6; ++i) {  // NOLINT
         testGame.addPlayer("TestElek" + std::to_string(i));
@@ -66,16 +66,16 @@ TEST(GameTestFixture, TestPlayerAdditionTooMany) {
     EXPECT_THROW(testGame.addPlayer("TestCrashElek"), runtime_error);
 }
 
-TEST(GameTestFixture, TestStepNotEnoughPlayers) {
-    Game testGame{};
+TEST(GameTest, TestStepNotEnoughPlayers) {
+    Game testGame{4};
 
     EXPECT_THROW(testGame.step(), runtime_error);
     testGame.addPlayer("TestElek");
     EXPECT_THROW(testGame.step(), runtime_error);
 }
 
-TEST(GameTestFixture, TestStepNextPlayerSelected) {
-    Game testGame{};
+TEST(GameTest, TestStepNextPlayerSelected) {
+    Game testGame{4};
 
     testGame.addPlayer("TestElek");
     testGame.addPlayer("TestElek2");
@@ -85,8 +85,8 @@ TEST(GameTestFixture, TestStepNextPlayerSelected) {
     EXPECT_EQ("TestElek", testGame.getCurrentPlayer().getName());
 }
 
-TEST(GameTestFixture, TestStepFirstPlayerSelectedAfterLast) {
-    Game testGame{};
+TEST(GameTest, TestStepFirstPlayerSelectedAfterLast) {
+    Game testGame{4};
 
     testGame.addPlayer("TestElek");
     testGame.addPlayer("TestElek2");
@@ -98,31 +98,81 @@ TEST(GameTestFixture, TestStepFirstPlayerSelectedAfterLast) {
     EXPECT_EQ("TestElek", testGame.getCurrentPlayer().getName());
 }
 
-TEST(GameTestFixture, TestStepDiceValueChanges) {
-    Game testGame{};
+TEST(GameTest, TestStepDiceValueChanges) {
+    Game testGame{4};
 
     testGame.addPlayer("TestElek");
     testGame.addPlayer("TestElek2");
 
     EXPECT_EQ(0, testGame.getDice().getValue());
     testGame.step();
-    EXPECT_EQ(6, testGame.getDice().getValue());
+    EXPECT_EQ(6, testGame.getDice().getValue()); // NOLINT
 }
 
-// TODO: Test step player leaves penalty
-// TODO: Test step player stays in penalty
-// TODO: Test step currentQuestion set properly
+TEST(GameTest, TestStepPlayerPositionChanges) {
+    Game testGame{4};
 
-TEST(GameTestFixture, TestCorrectAnswerNotEnoughPlayers) {
-    Game testGame{};
+    testGame.addPlayer("TestElek");
+    EXPECT_EQ("TestElek", testGame.getCurrentPlayer().getName());
+    EXPECT_EQ(0, testGame.getCurrentPlayer().getPosition());
+
+    testGame.addPlayer("TestElek2");
+    testGame.step();
+
+    EXPECT_EQ("TestElek", testGame.getCurrentPlayer().getName());
+    EXPECT_EQ(6, testGame.getCurrentPlayer().getPosition());
+}
+
+TEST(GameTest, TestStepPlayerStaysInPenalty) {
+    Game testGame{4};
+
+    testGame.addPlayer("TestElek");
+
+    EXPECT_EQ("TestElek", testGame.getCurrentPlayer().getName());
+    EXPECT_FALSE(testGame.getCurrentPlayer().isInPenalty());
+    EXPECT_FALSE(testGame.isCurrentPlayerJustLeftPenalty());
+
+    testGame.addPlayer("TestElek2");
+    testGame.step();
+    testGame.wrongAnswer();
+
+    EXPECT_EQ("TestElek", testGame.getCurrentPlayer().getName());
+    EXPECT_TRUE(testGame.getCurrentPlayer().isInPenalty());
+    EXPECT_FALSE(testGame.isCurrentPlayerJustLeftPenalty());
+
+    testGame.step();
+    testGame.step();
+
+    EXPECT_EQ("TestElek", testGame.getCurrentPlayer().getName());
+    EXPECT_TRUE(testGame.getCurrentPlayer().isInPenalty());
+    EXPECT_FALSE(testGame.isCurrentPlayerJustLeftPenalty());
+}
+
+TEST(GameTest, TestStepCurrentQuestionIsSetProperly) {
+    Game testGame{4};
+
+    testGame.addPlayer("TestElek");
+    testGame.addPlayer("TestElek2");
+
+    EXPECT_EQ("", testGame.getCurrentQuestion().first);
+    EXPECT_EQ("", testGame.getCurrentQuestion().second);
+
+    testGame.step();
+
+    EXPECT_EQ("Sports", testGame.getCurrentQuestion().first);
+    EXPECT_EQ("Sports Question 0", testGame.getCurrentQuestion().second);
+}
+
+TEST(GameTest, TestCorrectAnswerNotEnoughPlayers) {
+    Game testGame{4};
 
     EXPECT_THROW(testGame.correctAnswer(), runtime_error);
     testGame.addPlayer("TestElek");
     EXPECT_THROW(testGame.correctAnswer(), runtime_error);
 }
 
-TEST(GameTestFixture, TestCorrectAnswerPlayerNotInPenalty) {
-    Game testGame{};
+TEST(GameTest, TestCorrectAnswerPlayerNotInPenalty) {
+    Game testGame{4};
 
     testGame.addPlayer("TestElek");
     testGame.addPlayer("TestElek2");
@@ -140,8 +190,8 @@ TEST(GameTestFixture, TestCorrectAnswerPlayerNotInPenalty) {
     EXPECT_EQ(1, testGame.getCurrentPlayer().getNumberOfCoins());
 }
 
-TEST(GameTestFixture, TestCorrectAnswerPlayerInPenalty) {
-    Game testGame{};
+TEST(GameTest, TestCorrectAnswerPlayerInPenalty) {
+    Game testGame{4};
 
     testGame.addPlayer("TestElek");
     testGame.addPlayer("TestElek2");
@@ -149,7 +199,7 @@ TEST(GameTestFixture, TestCorrectAnswerPlayerInPenalty) {
     testGame.step();
     testGame.wrongAnswer();
     testGame.step();
-    testGame.step();                              // Dice value is 4 so we don't get out of penalty
+    testGame.step();
     EXPECT_EQ(4, testGame.getDice().getValue());  // NOLINT
 
     EXPECT_TRUE(testGame.getCurrentPlayer().isInPenalty());
@@ -163,8 +213,8 @@ TEST(GameTestFixture, TestCorrectAnswerPlayerInPenalty) {
     EXPECT_EQ(0, testGame.getCurrentPlayer().getNumberOfCoins());
 }
 
-TEST(GameTestFixture, TestCorrectAnswerPlayerWins) {
-    Game testGame{};
+TEST(GameTest, TestCorrectAnswerPlayerWins) {
+    Game testGame{4};
 
     testGame.addPlayer("TestElek");
     testGame.addPlayer("TestElek2");
@@ -180,16 +230,16 @@ TEST(GameTestFixture, TestCorrectAnswerPlayerWins) {
     EXPECT_EQ(6, testGame.getCurrentPlayer().getNumberOfCoins());
 }
 
-TEST(GameTestFixture, TestWrongAnswerNotEnoughPlayers) {
-    Game testGame{};
+TEST(GameTest, TestWrongAnswerNotEnoughPlayers) {
+    Game testGame{4};
 
     EXPECT_THROW(testGame.wrongAnswer(), runtime_error);
     testGame.addPlayer("TestElek");
     EXPECT_THROW(testGame.wrongAnswer(), runtime_error);
 }
 
-TEST(GameTestFixture, TestWrongAnswere) {
-    Game testGame{};
+TEST(GameTest, TestWrongAnswere) {
+    Game testGame{4};
 
     testGame.addPlayer("TestElek");
     testGame.addPlayer("TestElek2");
@@ -198,5 +248,3 @@ TEST(GameTestFixture, TestWrongAnswere) {
 
     EXPECT_TRUE(testGame.getCurrentPlayer().isInPenalty());
 }
-
-// TODO: Not playable after game over

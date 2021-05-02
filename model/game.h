@@ -15,6 +15,7 @@ namespace Trivia::Model {
 class Game {
 public:
     Game();
+    explicit Game(std::uint32_t diceSeed);
 
     void addPlayer(std::string playerName);
     void step();
@@ -43,8 +44,7 @@ private:
     [[nodiscard]] bool isPlayable() const;
 
 private:
-    // TODO: Fixed seed while developement
-    Dice  _dice{4};  // NOLINT
+    Dice  _dice;
     Board _board{};
 
     std::vector<Player>           _players{};

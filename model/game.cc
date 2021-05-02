@@ -17,7 +17,12 @@ using std::uint32_t;
 
 namespace Trivia::Model {
 
-Game::Game() {
+Game::Game() : _dice{} {
+    initializeDecks();
+}
+
+// NOTE: For testing purposes
+Game::Game(std::uint32_t diceSeed) : _dice{diceSeed} {
     initializeDecks();
 }
 

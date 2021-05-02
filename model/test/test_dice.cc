@@ -12,6 +12,14 @@ TEST(DiceTest, testDiceInitialization) {
     EXPECT_EQ(0, testDiceFixSeed.getValue());
 }
 
+TEST(DiceTest, testDiceValueChangesWithRoll)  {
+    Dice testDice{1};
+
+    EXPECT_EQ(0, testDice.getValue());
+    testDice.roll();
+    EXPECT_EQ(3, testDice.getValue());
+}
+
 TEST(DiceTest, testDiceReturnsAllFixValuesWithFixSeed) {
     Dice testDice{1};
 
