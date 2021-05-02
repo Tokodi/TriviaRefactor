@@ -25,8 +25,8 @@ private:
 
 private:
     // NOTE: Hash test settings
-    //Model::Game    _game{4};
-    //std::mt19937 _generator{1};
+    // Model::Game    _game{4};
+    // std::mt19937 _generator{1};
 
     Model::Game    _game{};
     View::TextView _view{_game};
