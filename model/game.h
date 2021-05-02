@@ -22,9 +22,9 @@ public:
     void correctAnswer();
     void wrongAnswer();
 
-    [[nodiscard]] const Player& getCurrentPlayer() const;
-    [[nodiscard]] const Dice& getDice() const;
-    [[nodiscard]] std::size_t getNumberOfPlayers() const;
+    [[nodiscard]] const Player&                              getCurrentPlayer() const;
+    [[nodiscard]] const Dice&                                getDice() const;
+    [[nodiscard]] std::size_t                                getNumberOfPlayers() const;
     [[nodiscard]] const std::pair<std::string, std::string>& getCurrentQuestion() const;
 
     [[nodiscard]] bool isCurrentPlayerJustLeftPenalty() const;
@@ -32,9 +32,9 @@ public:
 
 private:
     static constexpr std::size_t NUMBER_OF_QUESTIONS_PER_SUBJECT = 50;
-    static constexpr std::size_t NUMBER_OF_MIN_PLAYERS = 2;
-    static constexpr std::size_t NUMBER_OF_MAX_PLAYERS = 6;
-    static constexpr std::size_t NUMBER_OF_COINS_TO_WIN = 6;
+    static constexpr std::size_t NUMBER_OF_MIN_PLAYERS           = 2;
+    static constexpr std::size_t NUMBER_OF_MAX_PLAYERS           = 6;
+    static constexpr std::size_t NUMBER_OF_COINS_TO_WIN          = 6;
 
 private:
     void initializeDecks();
@@ -44,10 +44,10 @@ private:
 
 private:
     // TODO: Fixed seed while developement
-    Dice _dice{4}; // NOLINT
+    Dice  _dice{4};  // NOLINT
     Board _board{};
 
-    std::vector<Player> _players{};
+    std::vector<Player>           _players{};
     std::vector<Player>::iterator _currentPlayer{_players.end()};
 
     bool _isGameOver{false};
@@ -61,4 +61,4 @@ private:
     std::pair<std::string, std::string> _currentQuestion{};
 };
 
-} // namespace Trivia::Model
+}  // namespace Trivia::Model

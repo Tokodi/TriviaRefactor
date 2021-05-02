@@ -15,7 +15,7 @@ TEST(GameTestFixture, TestGameInitialization) {
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-result"
-    EXPECT_THROW(testGame.getCurrentPlayer(), runtime_error); // NOLINT
+    EXPECT_THROW(testGame.getCurrentPlayer(), runtime_error);  // NOLINT
 #pragma GCC diagnostic pop
     EXPECT_EQ(0, testGame.getDice().getValue());
     EXPECT_EQ(0, testGame.getNumberOfPlayers());
@@ -48,7 +48,7 @@ TEST(GameTestFixture, TestPlayerAdditionMore) {
 
     EXPECT_EQ("TestElek3", testGame.getCurrentPlayer().getName());
     EXPECT_EQ(0, testGame.getDice().getValue());
-    EXPECT_EQ(3, testGame.getNumberOfPlayers()); // NOLINT
+    EXPECT_EQ(3, testGame.getNumberOfPlayers());  // NOLINT
     EXPECT_EQ("", testGame.getCurrentQuestion().first);
     EXPECT_EQ("", testGame.getCurrentQuestion().second);
     EXPECT_FALSE(testGame.isCurrentPlayerJustLeftPenalty());
@@ -58,11 +58,11 @@ TEST(GameTestFixture, TestPlayerAdditionMore) {
 TEST(GameTestFixture, TestPlayerAdditionTooMany) {
     Game testGame{};
 
-    for (size_t i = 0; i < 6; ++i) { // NOLINT
+    for (size_t i = 0; i < 6; ++i) {  // NOLINT
         testGame.addPlayer("TestElek" + std::to_string(i));
     }
 
-    EXPECT_EQ(6, testGame.getNumberOfPlayers()); // NOLINT
+    EXPECT_EQ(6, testGame.getNumberOfPlayers());  // NOLINT
     EXPECT_THROW(testGame.addPlayer("TestCrashElek"), runtime_error);
 }
 
@@ -149,8 +149,8 @@ TEST(GameTestFixture, TestCorrectAnswerPlayerInPenalty) {
     testGame.step();
     testGame.wrongAnswer();
     testGame.step();
-    testGame.step(); // Dice value is 4 so we don't get out of penalty
-    EXPECT_EQ(4, testGame.getDice().getValue()); // NOLINT
+    testGame.step();                              // Dice value is 4 so we don't get out of penalty
+    EXPECT_EQ(4, testGame.getDice().getValue());  // NOLINT
 
     EXPECT_TRUE(testGame.getCurrentPlayer().isInPenalty());
     EXPECT_FALSE(testGame.isOver());
@@ -171,7 +171,7 @@ TEST(GameTestFixture, TestCorrectAnswerPlayerWins) {
 
     EXPECT_FALSE(testGame.isOver());
 
-    for (size_t i = 0; i < 11; ++i) { // NOLINT
+    for (size_t i = 0; i < 11; ++i) {  // NOLINT
         testGame.step();
         testGame.correctAnswer();
     }

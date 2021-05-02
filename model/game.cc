@@ -139,4 +139,4 @@ void Game::setCurrentQuestion() {
     }
 }
 
-} //  namespace Trivia::Model
+}  //  namespace Trivia::Model

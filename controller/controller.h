@@ -18,18 +18,18 @@ public:
     void startGame();
 
 private:
-    static constexpr double PROBABILITY_OF_CORRECT_ANSWER = static_cast<double>(8)/9;
+    static constexpr double PROBABILITY_OF_CORRECT_ANSWER = static_cast<double>(8) / 9;
 
 private:
     bool isCorrectAnswer();
 
 private:
-    Model::Game _game{};
+    Model::Game    _game{};
     View::TextView _view{_game};
 
     // TODO: Fixed seed while developement
     std::mt19937 _generator{1};
-    //std::mt19937 _generator{static_cast<std::uint64_t>(std::chrono::system_clock::now().time_since_epoch().count())};
+    // std::mt19937 _generator{static_cast<std::uint64_t>(std::chrono::system_clock::now().time_since_epoch().count())};
     std::bernoulli_distribution _distribution{PROBABILITY_OF_CORRECT_ANSWER};
 };
 

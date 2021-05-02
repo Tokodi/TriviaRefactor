@@ -6,7 +6,6 @@
 
 namespace Trivia::Model {
 
-// NOTE: Dice roll has a discrete uniform distribution
 class Dice {
 public:
     Dice();
@@ -23,7 +22,8 @@ private:
 private:
     std::uint32_t _currentValue{0};
 
-    std::mt19937 _generator;
+    // NOTE: Dice roll has a discrete uniform distribution
+    std::mt19937                                 _generator;
     std::uniform_int_distribution<std::uint32_t> _distribution{MIN_VALUE, MAX_VALUE};
 };
 

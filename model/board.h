@@ -12,7 +12,7 @@ public:
     [[nodiscard]] Field getField(std::uint32_t position) const;
 
 public:
-    static constexpr std::size_t SIZE = 12;
+    static constexpr std::uint32_t SIZE = 12;
 
 private:
     static const std::array<Field, SIZE> _board;

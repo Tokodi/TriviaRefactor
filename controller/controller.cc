@@ -4,8 +4,8 @@
 #include <functional>
 #include <iostream>
 
-using std::cout;
 using std::bind;
+using std::cout;
 using std::endl;
 using std::runtime_error;
 using std::string;

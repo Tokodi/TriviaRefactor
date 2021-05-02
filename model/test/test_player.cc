@@ -1,8 +1,8 @@
-#include "player.h"
-
 #include <gtest/gtest.h>
 
 #include <memory>
+
+#include "player.h"
 
 using std::make_unique;
 using std::unique_ptr;
@@ -22,7 +22,7 @@ protected:
 };
 
 TEST_F(PlayerTestFixture, testPlayerInitialization) {
-    EXPECT_EQ("TestElek", _testPlayer->getName()); // NOLINT
+    EXPECT_EQ("TestElek", _testPlayer->getName());  // NOLINT
     EXPECT_EQ(0, _testPlayer->getNumberOfCoins());
     EXPECT_FALSE(_testPlayer->isInPenalty());
     EXPECT_EQ(0, _testPlayer->getPosition());
@@ -60,12 +60,12 @@ TEST_F(PlayerTestFixture, testZeroStep) {
 
 TEST_F(PlayerTestFixture, testStepOwerflow) {
     EXPECT_EQ(0, _testPlayer->getPosition());
-    _testPlayer->step(12); // NOLINT
+    _testPlayer->step(12);  // NOLINT
     EXPECT_EQ(0, _testPlayer->getPosition());
 }
 
 TEST_F(PlayerTestFixture, testStepOwerflowWithOne) {
     EXPECT_EQ(0, _testPlayer->getPosition());
-    _testPlayer->step(13); // NOLINT
+    _testPlayer->step(13);  // NOLINT
     EXPECT_EQ(1, _testPlayer->getPosition());
 }

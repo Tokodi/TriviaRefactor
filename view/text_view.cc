@@ -7,8 +7,7 @@ using std::endl;
 
 namespace Trivia::View {
 
-TextView::TextView(const Model::Game& gameModel)
-    : _gameModel(gameModel) {
+TextView::TextView(const Model::Game& gameModel) : _gameModel(gameModel) {
 }
 
 void TextView::newPlayerAdded() const {
@@ -29,8 +28,7 @@ void TextView::gameStepped() const {
         }
     }
 
-    cout << _gameModel.getCurrentPlayer().getName()
-         << "'s new location is "
+    cout << _gameModel.getCurrentPlayer().getName() << "'s new location is "
          << _gameModel.getCurrentPlayer().getPosition() << endl;
 
     cout << "The category is " << _gameModel.getCurrentQuestion().first << endl;
@@ -42,9 +40,7 @@ void TextView::correctAnswer() const {
         return;
 
     cout << "Answer was correct!!!!" << endl;
-    cout << _gameModel.getCurrentPlayer().getName()
-         << " now has "
-         << _gameModel.getCurrentPlayer().getNumberOfCoins()
+    cout << _gameModel.getCurrentPlayer().getName() << " now has " << _gameModel.getCurrentPlayer().getNumberOfCoins()
          << " Gold Coins." << endl;
 }
 

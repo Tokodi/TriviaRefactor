@@ -1,5 +1,7 @@
 #include "player.h"
 
+#include "board.h"
+
 using std::move;
 using std::ostream;
 using std::string;
@@ -7,11 +9,7 @@ using std::uint32_t;
 
 namespace Trivia::Model {
 
-Player::Player(string name)
-    : _name(move(name))
-    , _numberOfCoins(0)
-    , _isInPenalty(false)
-    , _position(0) {
+Player::Player(string name) : _name(move(name)), _numberOfCoins(0), _isInPenalty(false), _position(0) {
 }
 
 void Player::addCoin() {
@@ -27,8 +25,7 @@ void Player::leavePenalty() {
 }
 
 void Player::step(uint32_t steps) {
-    // TODO: Magic number 12 should be the boards length
-    _position = (_position + steps) % 12; //NOLINT
+    _position = (_position + steps) % Board::SIZE;
 }
 
 const string& Player::getName() const {

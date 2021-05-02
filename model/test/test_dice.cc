@@ -1,6 +1,6 @@
-#include "dice.h"
-
 #include <gtest/gtest.h>
+
+#include "dice.h"
 
 using Trivia::Model::Dice;
 
