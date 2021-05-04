@@ -83,10 +83,6 @@ void Game::wrongAnswer() {
     _currentPlayer->toPenalty();
 }
 
-const Dice& Game::getDice() const {
-    return _dice;
-}
-
 const Player& Game::getCurrentPlayer() const {
     if (_currentPlayer == _players.end())
         throw runtime_error("Not enough players");
@@ -94,8 +90,8 @@ const Player& Game::getCurrentPlayer() const {
     return *_currentPlayer;
 }
 
-bool Game::isCurrentPlayerJustLeftPenalty() const {
-    return _isCurrentPlayerJustLeftPenalty;
+const Dice& Game::getDice() const {
+    return _dice;
 }
 
 size_t Game::getNumberOfPlayers() const {
@@ -104,6 +100,10 @@ size_t Game::getNumberOfPlayers() const {
 
 const pair<string, string>& Game::getCurrentQuestion() const {
     return _currentQuestion;
+}
+
+bool Game::isCurrentPlayerJustLeftPenalty() const {
+    return _isCurrentPlayerJustLeftPenalty;
 }
 
 bool Game::isOver() const {
@@ -117,10 +117,6 @@ void Game::initializeDecks() {
         _sportsQuestions.emplace("Sports Question " + to_string(i));
         _rockQuestions.emplace("Rock Question " + to_string(i));
     }
-}
-
-bool Game::isPlayable() const {
-    return (getNumberOfPlayers() >= NUMBER_OF_MIN_PLAYERS && !isOver());
 }
 
 void Game::setCurrentQuestion() {
@@ -142,6 +138,10 @@ void Game::setCurrentQuestion() {
             _rockQuestions.pop();
             break;
     }
+}
+
+bool Game::isPlayable() const {
+    return (getNumberOfPlayers() >= NUMBER_OF_MIN_PLAYERS && !isOver());
 }
 
 }  //  namespace Trivia::Model
